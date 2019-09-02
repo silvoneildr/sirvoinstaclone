@@ -20,11 +20,11 @@ export default function Feed() {
   const [viewable, setViewable] = useState([]);
 
   async function loadPage(pageNumber = page, shouldRefresh = false) {
+    const urlBase = "http://localhost:3000/";
+    const params = `?_expand=author&_limit=4&_page=${pageNumber}`;
     if (total && pageNumber > total) return;
     setLoading(true);
-    const response = await fetch(
-      `http://localhost:3000/feed?_expand=author&_limit=4&_page=${pageNumber}`,
-    );
+    const response = await fetch(`${urlBase}feed${params}`);
     const data = await response.json();
     const totalItems = response.headers.get('X-Total-Count');
     setTotal(Math.floor(totalItems/5));
@@ -57,7 +57,7 @@ export default function Feed() {
         onRefresh={refreshList}
         onViewableItemsChanged={handleViewableChanged}
         refreshing={refreshing}
-        viewabilityConfig={{ viewAreaCoveragePercentThreshold: 22 }}
+        viewabilityConfig={{ viewAreaCoveragePercentThreshold: 15 }}
         ListFooterComponent={loading && <Loading />}
         renderItem={({item}) => (
           <Post>
