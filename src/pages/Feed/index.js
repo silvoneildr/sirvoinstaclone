@@ -47,35 +47,37 @@ export default function Feed() {
     setViewable(changed.map(({ item }) => item.id));
   }, []);
 
+  const renderItem = ({ item }) => (
+    <Post>
+      <Header>
+        <Avatar source={{uri: item.author.avatar}} />
+        <Name>{item.author.name}</Name>
+      </Header>
+      <LazyImage
+        shouldLoad={viewable.includes(item.id)}
+        ratio={item.aspectRatio}
+        smallSource={{uri: item.small}}
+        source={{uri: item.image}}
+      />
+      <Description>
+        <Name>{item.author.name}</Name> {item.description}
+      </Description>
+    </Post>
+  );
+
   return (
     <View>
       <FlatList
         data={feed}
         keyExtractor={post => String(post.id)}
-          onEndReached={() => loadPage()}
-        onEndReachedThreshold={0.1}
-        onRefresh={refreshList}
-        onViewableItemsChanged={handleViewableChanged}
         refreshing={refreshing}
         viewabilityConfig={{ viewAreaCoveragePercentThreshold: 15 }}
         ListFooterComponent={loading && <Loading />}
-        renderItem={({item}) => (
-          <Post>
-            <Header>
-              <Avatar source={{uri: item.author.avatar}} />
-              <Name>{item.author.name}</Name>
-            </Header>
-            <LazyImage
-              shouldLoad={viewable.includes(item.id)}
-              ratio={item.aspectRatio}
-              smallSource={{uri: item.small}}
-              source={{uri: item.image}}
-            />
-            <Description>
-              <Name>{item.author.name}</Name> {item.description}
-            </Description>
-          </Post>
-        )}
+        onEndReached={() => loadPage()}
+        onEndReachedThreshold={0.1}
+        onRefresh={refreshList}
+        onViewableItemsChanged={handleViewableChanged}
+        renderItem={renderItem}
       />
     </View>
   );
